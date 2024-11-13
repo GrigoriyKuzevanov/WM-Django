@@ -62,8 +62,18 @@ class DogDetail(APIView):
 
         return Response(dog_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self):
-        pass
+    def delete(self, request, pk: int) -> Response:
+        """
+        Удаляет данные о собаке по переданному идентификатору.
+
+        Args:
+            pk (int): идентификатор собаки
+        """
+        
+        dog_model = self.get_object(pk)
+        dog_model.delete()
+        
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class DogList(APIView):
