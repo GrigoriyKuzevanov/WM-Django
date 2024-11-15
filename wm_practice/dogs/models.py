@@ -3,7 +3,7 @@ from django.db import models
 
 class Dog(models.Model):
     """
-    Класс для представления модели собаки в базе данных.
+    Dog model representing class.
     """
 
     name = models.CharField(max_length=100, blank=False)
@@ -17,8 +17,10 @@ class Dog(models.Model):
     favorite_toy = models.CharField(255)
 
     def __str__(self) -> str:
-        """
-        Возвращает строковое представление класса на основе поля name.
+        """Get instance's string representation using name field.
+
+        Returns:
+            str: String representation.
         """
 
         return f"Dog: {self.name}"
@@ -26,7 +28,11 @@ class Dog(models.Model):
 
 class Breed(models.Model):
     """
-    Класс для представления породы собак в базе данных.
+    Breed model representing class.
+
+    Attributes:
+        SIZE_CHOICES (list[tuple[str, str]]): Choices for size field
+        RATING_CHOICES (list[typle[int, str]]): Choices for fields using rating system
     """
 
     SIZE_CHOICES = [
@@ -45,9 +51,11 @@ class Breed(models.Model):
     shedding_amount = models.PositiveIntegerField(choices=RATING_CHOICES, blank=False)
     exercise_needs = models.PositiveIntegerField(choices=RATING_CHOICES, blank=False)
 
-    def __str__(self):
-        """
-        Возвращает строковое представление класса на основе поля name.
+    def __str__(self) -> str:
+        """Get instance's string representation using name field.
+
+        Returns:
+            str: String representation.
         """
 
         return f"Breed: {self.name}"
