@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, PrimaryKeyRelatedField
 
 from .models import Breed, Dog
 
@@ -27,6 +27,11 @@ class DogSerializer(ModelSerializer):
     and id field read only.
     """
 
+    breed_id = PrimaryKeyRelatedField(
+        queryset=Breed.objects.all(), source="breed", write_only=True
+    )
+    breed = BreedSerializer(read_only=True)
+
     class Meta:
         model = Dog
         fields = [
@@ -34,9 +39,10 @@ class DogSerializer(ModelSerializer):
             "name",
             "age",
             "breed",
+            "breed_id",
             "gender",
             "color",
             "favorite_food",
             "favorite_toy",
         ]
-        read_only_fields = ["id"]
+        read_only_fields = ["id", "breed"]
