@@ -10,23 +10,25 @@ from .serializers import BreedSerializer, DogSerializer
 
 
 class DogDetail(APIView):
-    """
-    Класс для обработки запросов на получение, обновление и удаление
-    данных о конкретной собаке.
+    """Class for handling requests to get, update, delete dog data.
 
-    - GET: Получить данные о собаке по id
-    - PUT: Обновить данные о собаке по id
-    - DELETE: Удалить данные собаки по id
+    - GET: Get dog data by given id
+    - PUT: Update dog data by given id
+    - DELETE: Delete dog data by given id
     """
 
     def get_object(self, pk: int) -> Dog:
-        """
-        Получить объект собаки по переданному идентификатору.
-        Возвращает Http 404 error, если данных собаки с переданным id
-        не существует.
+        """Get dog model by given id from database or raise
+        exception if it doens't exist.
 
         Args:
-            pk (int): Идентификатор собаки
+            pk (int): Dog's id
+
+        Raises:
+            Http404: If Dog with given id doesn't exist
+
+        Returns:
+            Dog: Django orm model for dog with given id
         """
 
         try:
@@ -34,57 +36,66 @@ class DogDetail(APIView):
         except Dog.DoesNotExist:
             raise Http404(f"Dog with id: {pk} is not found")
 
-    def get(self, request, pk: int, format=None) -> Response:
-        """
-        Получить данные о собаке по переданному идентификатору.
+    def get(self, request: Request, pk: int) -> Response:
+        """Get dog data using given identificator
 
         Args:
-            pk (int): идентификатор собаки
+            request (Request): DRF Request object
+            pk (int): Dog's id
+
+        Returns:
+            Response: DRF Response object with requested dog data
         """
 
-        dog_model = self.get_object(pk)
-        dog_serializer = DogSerializer(dog_model)
+        model = self.get_object(pk)
+        serializer = DogSerializer(model)
 
-        return Response(dog_serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def put(self, request, pk: int) -> Response:
-        """
-        Изменить данные о собаке по переданному идентификатору.
+    def put(self, request: Request, pk: int) -> Response:
+        """Update dog data using given identificator.
 
         Args:
-            pk (int): идентификатор собаки
+            request (Request): DRF Request object
+            pk (int): Dog's id
+
+        Returns:
+            Response: DRF Response object with updated dog data
         """
 
-        dog_model = self.get_object(pk)
-        dog_serializer = DogSerializer(dog_model, data=request.data)
+        model = self.get_object(pk)
+        serializer = DogSerializer(model, data=request.data)
 
-        if dog_serializer.is_valid():
-            dog_serializer.save()
-            return Response(dog_serializer.data, status=status.HTTP_200_OK)
+        if serializer.is_valid():
+            serializer.save()
 
-        return Response(dog_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def delete(self, request, pk: int) -> Response:
-        """
-        Удалить данные о собаке по переданному идентификатору.
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request: Request, pk: int) -> Response:
+        """Delete dog data using given identificator.
 
         Args:
-            pk (int): идентификатор собаки
+            request (Request): DRF Request object
+            pk (int): Dog's id
+
+        Returns:
+            Response: Blank DRF Response with 204 status
         """
 
-        dog_model = self.get_object(pk)
-        dog_model.delete()
+        model = self.get_object(pk)
+        model.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class DogList(APIView):
-    """
-    Класс для обработки запросов на получение списка собак
-    и добавления данных новой собаки.
+    """Class for handling requests to get list of all dogs from DB
+    and to create a new dog in DB with given request data.
 
-    - GET: Получить список данных о всех собаках
-    - POST: Добавить данные о новой собаке
+    - GET: Get list of all dogs
+    - POST: Create a new dog in DB
     """
 
     @staticmethod
@@ -95,9 +106,14 @@ class DogList(APIView):
 
         return Dog.objects.all()
 
-    def get(self, request) -> Response:
-        """
-        Получить список всех собак из БД.
+    def get(self, request: Request) -> Response:
+        """Get list of all dogs in DB.
+
+        Args:
+            request (Request): DRF Request object
+
+        Returns:
+            Response: DRF Response object with data of all dogs
         """
 
         dog_models = self.get_queryset()
@@ -105,26 +121,32 @@ class DogList(APIView):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request) -> Response:
+    def post(self, request: Request) -> Response:
+        """Create a new dog with given data.
+
+        Args:
+            request (Request): DRF Request object
+
+        Returns:
+            Response: DRF Response object with created dog data
         """
-        Добавить данные о новой собаке с переданными параметрами.
-        """
 
-        dog_serializer = DogSerializer(data=request.data)
+        serializer = DogSerializer(data=request.data)
 
-        if dog_serializer.is_valid():
-            dog_serializer.save()
-            return Response(dog_serializer.data, status=status.HTTP_201_CREATED)
+        if serializer.is_valid():
+            serializer.save()
 
-        return Response(dog_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BreedDetail(APIView):
-    """Class for handling requests to get, update, delete breed's data.
+    """Class for handling requests to get, update, delete breed data.
 
-    - GET: Get breed's data by given id
-    - PUT: Update breed's data by given id
-    - DELETE: Delete breed's data by given id
+    - GET: Get breed data by given id
+    - PUT: Update breed data by given id
+    - DELETE: Delete breed data by given id
     """
 
     def get_object(self, pk: int) -> Breed:
@@ -135,10 +157,10 @@ class BreedDetail(APIView):
             pk (int): Breed's id
 
         Raises:
-            Http404: If Breed by given id doesn't exist
+            Http404: If Breed with given id doesn't exist
 
         Returns:
-            Breed: Django orm model for breed by given id
+            Breed: Django orm model for breed with given id
         """
 
         try:
@@ -151,10 +173,10 @@ class BreedDetail(APIView):
 
         Args:
             request (Request): DRF Request object
-            pk (int): breed's id
+            pk (int): Breed's id
 
         Returns:
-            Response: DRF Response object with requested breed's data
+            Response: DRF Response object with requested breed data
         """
 
         model = self.get_object(pk)
@@ -163,14 +185,14 @@ class BreedDetail(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request: Request, pk: int) -> Response:
-        """Update breed's data using given identificator.
+        """Update breed data using given identificator.
 
         Args:
             request (Request): DRF Request object
-            pk (int): breed's id
+            pk (int): Breed's id
 
         Returns:
-            Response: DRF Response object with updated breed's data
+            Response: DRF Response object with updated breed data
         """
 
         model = self.get_object(pk)
@@ -184,14 +206,14 @@ class BreedDetail(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request: Request, pk: int) -> Response:
-        """Delete breed's data using given identificator.
+        """Delete breed data using given identificator.
 
         Args:
             request (Request): DRF Request object
-            pk (int): breed's id
+            pk (int): Breed's id
 
         Returns:
-            Response: blank DRF Response with 204 status
+            Response: Blank DRF Response with 204 status
         """
 
         model = self.get_object(pk)
@@ -202,7 +224,7 @@ class BreedDetail(APIView):
 
 class BreedList(APIView):
     """Class for handling requests to get list of all breeds from DB
-    and to create a new breed in DB with given in request data.
+    and to create a new breed in DB with given request data.
 
     - GET: Get list of all breeds
     - POST: Create a new breed in DB
