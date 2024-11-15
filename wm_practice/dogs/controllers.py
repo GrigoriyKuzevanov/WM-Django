@@ -1,4 +1,3 @@
-from django.db.models.query import QuerySet
 from django.http import Http404
 from rest_framework import status
 from rest_framework.request import Request
@@ -108,7 +107,8 @@ class DogList(APIView):
             Response: DRF Response object with data of all dogs
         """
 
-        qs = Dog.objects.all()
+        qs = Dog.objects.all().select_related("breed")
+
         serializer = DogSerializer(qs, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
