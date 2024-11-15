@@ -4,9 +4,8 @@ from .models import Breed, Dog
 
 
 class BreedSerializer(ModelSerializer):
-    """
-    Сериалайзер для модели породы. Использует все поля модели,
-    поле id доступно только для чтения.
+    """Serializer class for Breed model using all is's fields,
+    and id field read only.
     """
 
     class Meta:
@@ -24,9 +23,8 @@ class BreedSerializer(ModelSerializer):
 
 
 class DogSerializer(ModelSerializer):
-    """
-    Сериалайзер для модели собаки. Использует все поля модели,
-    поле id доступно только для чтения.
+    """Serializer class for Dog model using all is's fields,
+    and id field read only.
     """
 
     class Meta:
