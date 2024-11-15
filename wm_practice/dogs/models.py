@@ -6,11 +6,9 @@ class Dog(models.Model):
     Dog model representing class.
     """
 
-    name = models.CharField(max_length=100, blank=False)
+    name = models.CharField(max_length=100)
     age = models.PositiveIntegerField()
-    breed = models.ForeignKey(
-        "Breed", related_name="dogs", on_delete=models.CASCADE, blank=False
-    )
+    breed = models.ForeignKey("Breed", related_name="dogs", on_delete=models.CASCADE)
     gender = models.CharField(max_length=50)
     color = models.CharField(max_length=50)
     favorite_food = models.CharField(255)
@@ -45,11 +43,11 @@ class Breed(models.Model):
     RATING_CHOICES = [(i, str(i)) for i in range(1, 6)]
 
     name = models.CharField(max_length=100)
-    size = models.CharField(max_length=10, choices=SIZE_CHOICES, blank=False)
-    friendliness = models.PositiveIntegerField(choices=RATING_CHOICES, blank=False)
-    trainability = models.PositiveIntegerField(choices=RATING_CHOICES, blank=False)
-    shedding_amount = models.PositiveIntegerField(choices=RATING_CHOICES, blank=False)
-    exercise_needs = models.PositiveIntegerField(choices=RATING_CHOICES, blank=False)
+    size = models.CharField(max_length=10, choices=SIZE_CHOICES)
+    friendliness = models.PositiveIntegerField(choices=RATING_CHOICES)
+    trainability = models.PositiveIntegerField(choices=RATING_CHOICES)
+    shedding_amount = models.PositiveIntegerField(choices=RATING_CHOICES)
+    exercise_needs = models.PositiveIntegerField(choices=RATING_CHOICES)
 
     def __str__(self) -> str:
         """Get instance's string representation using name field.
