@@ -98,14 +98,6 @@ class DogList(APIView):
     - POST: Create a new dog in DB
     """
 
-    @staticmethod
-    def get_queryset() -> QuerySet[Dog]:
-        """
-        Получить список всех записей собак из БД.
-        """
-
-        return Dog.objects.all()
-
     def get(self, request: Request) -> Response:
         """Get list of all dogs in DB.
 
@@ -116,8 +108,8 @@ class DogList(APIView):
             Response: DRF Response object with data of all dogs
         """
 
-        dog_models = self.get_queryset()
-        serializer = DogSerializer(dog_models, many=True)
+        qs = Dog.objects.all()
+        serializer = DogSerializer(qs, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
